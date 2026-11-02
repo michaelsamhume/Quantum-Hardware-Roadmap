@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Hardware Roadmap · Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --panel:#FFFFFF;
+    --panel-2:#F7F2F2;
+    --line:#E3DADA;
+    --text:#171212;
+    --muted:#6E6262;
+    --muted-2:#A69999;
+    --glow:#D6182F;
+    --glow-dim:rgba(214,24,47,0.08);
+    --amber:#A8121F;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(214,24,47,0.05), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 100% 0%, rgba(214,24,47,0.04), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  ::selection{background:var(--glow-dim);color:var(--glow);}
+  .wrap{max-width:1400px;margin:0 auto;padding:36px 28px 80px;}
+
+  /* ---------- Header ---------- */
+  header{margin-bottom:34px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--glow); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow);animation:pulse 2.2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:clamp(30px,4vw,46px); line-height:1.08; margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  h1 span{color:var(--glow);}
+  .sub{color:var(--muted); font-size:15.5px; line-height:1.6; max-width:760px; margin:0 0 26px;}
+
+  .statbar{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .stat{flex:1; min-width:130px; padding:16px 20px; border-right:1px solid var(--line); background:var(--panel);}
+  .stat:last-child{border-right:none;}
+  .stat .n{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:26px; color:var(--text);}
+  .stat .l{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:4px;}
+
+  /* ---------- Controls ---------- */
+  .step{margin-top:34px;}
+  .step-h{display:flex; align-items:baseline; gap:10px; margin-bottom:14px;}
+  .step-h .num{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--bg); background:var(--glow);
+    padding:2px 7px; border-radius:4px; font-weight:600;
+  }
+  .step-h h2{font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0; font-weight:600;}
+  .step-h .hint{color:var(--muted-2); font-size:12.5px; margin-left:4px;}
+  .admin-btn{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:6px 12px;
+    border-radius:20px; border:1px solid var(--line); background:var(--panel); color:var(--muted); cursor:pointer;
+  }
+  .admin-btn:hover{border-color:var(--muted-2); color:var(--text);}
+  .admin-btn.on{background:var(--glow-dim); border-color:var(--glow); color:var(--glow);}
+
+  .chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    background:var(--panel); border:1px solid var(--line); color:var(--muted);
+    padding:7px 13px; border-radius:20px; cursor:pointer; user-select:none;
+    display:flex; align-items:center; gap:7px; transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--muted-2); color:var(--text);}
+  .chip .sw{width:8px;height:8px;border-radius:50%;flex:none;}
+  .chip.active{background:var(--panel-2); color:var(--text); border-color:currentColor;}
+  .chip.util{color:var(--muted);}
+  .chip.util:hover{color:var(--text);}
+
+  .companygrid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:6px;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px;
+  }
+  .co-chip{
+    display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px;
+    cursor:pointer; font-size:13px; color:var(--muted-2); transition:all .12s ease; border:1px solid transparent;
+  }
+  .co-chip:hover{background:var(--panel-2);}
+  .co-chip.active{color:var(--text); background:var(--panel-2); border-color:var(--line);}
+  .co-chip .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .co-chip.active .dot{box-shadow:0 0 6px currentColor;}
+
+  .searchrow{display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center;}
+  input[type=search]{
+    background:var(--panel); border:1px solid var(--line); color:var(--text);
+    padding:9px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:13.5px;
+    min-width:220px; flex:1;
+  }
+  input[type=search]:focus{outline:none; border-color:var(--glow);}
+  input[type=search]::placeholder{color:var(--muted-2);}
+
+  .viewtoggle{display:flex; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .viewtoggle button{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:9px 16px; background:transparent;
+    border:none; color:var(--muted); cursor:pointer; transition:all .15s ease;
+  }
+  .viewtoggle button.active{background:var(--glow); color:#FFFFFF; font-weight:600;}
+
+  .selcount{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted-2); white-space:nowrap;}
+  .selcount b{color:var(--glow);}
+
+  /* ---------- Timeline ---------- */
+  .timeline-wrap{
+    margin-top:18px; border:1px solid var(--line); border-radius:var(--radius); overflow:auto;
+    background:var(--panel);
+  }
+  table.tl{border-collapse:collapse; width:100%; min-width:1180px;}
+  table.tl thead th{
+    position:sticky; top:0; background:var(--panel-2); z-index:2;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:.05em; padding:12px 10px; text-align:left; border-bottom:1px solid var(--line);
+  }
+  table.tl thead th.yr{text-align:center; min-width:112px;}
+  table.tl thead th.co{position:sticky; left:0; z-index:3; min-width:230px;}
+  table.tl thead th.ft{min-width:320px; text-align:left;}
+  table.tl tbody td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; font-size:12px; color:var(--muted); line-height:1.35;}
+  table.tl tbody tr:hover td{background:var(--glow-dim);}
+  table.tl tbody td.co{
+    position:sticky; left:0; background:var(--panel); z-index:1;
+    font-family:'Space Grotesk',sans-serif; color:var(--text); font-weight:600; font-size:13px;
+  }
+  table.tl tbody tr:hover td.co{background:#FBEAEC;}
+  .co-cell{display:flex; align-items:center; gap:9px;}
+  .co-cell .dot{width:8px;height:8px;border-radius:50%;flex:none; margin-top:1px;}
+  .co-cell .mod{display:block; font-family:'IBM Plex Mono',monospace; font-weight:400; font-size:10px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.04em; margin-top:1px;}
+  td.yrcell{max-width:170px; cursor:default;}
+  td.yrcell .cellbox{
+    padding:6px 8px; border-radius:6px; border:1px solid transparent;
+  }
+  td.yrcell.now .cellbox{background:var(--glow-dim); border-color:rgba(214,24,47,.3); color:#8C0E1E; font-weight:500;}
+  td.yrcell:hover .cellbox{background:var(--panel-2); border-color:var(--line);}
+  td.ftcell{text-align:left; max-width:340px;}
+  .ftbadge{
+    display:inline-flex; align-items:flex-start; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--amber); background:rgba(168,18,31,.06); border:1px solid rgba(168,18,31,.25);
+    padding:7px 10px; border-radius:10px; white-space:normal; line-height:1.45;
+  }
+
+  /* ---------- Metrics view ---------- */
+  .metric-controls{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .metric-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:8px 14px; border-radius:8px;
+    background:var(--panel); border:1px solid var(--line); color:var(--muted); cursor:pointer;
+  }
+  .metric-btn.active{background:var(--glow-dim); border-color:var(--glow); color:var(--glow);}
+  .chart-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-top:4px;}
+  .chart-card h3{font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 4px;}
+  .chart-card .desc{color:var(--muted-2); font-size:12.5px; margin-bottom:18px;}
+  .barrow{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .barrow .name{width:190px; flex:none; font-size:12px; font-family:'IBM Plex Mono',monospace; color:var(--text); display:flex; align-items:center; gap:7px;}
+  .barrow .name .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .barrow .track{flex:1; height:20px; background:var(--panel-2); border-radius:5px; overflow:hidden; position:relative;}
+  .barrow .fill{height:100%; border-radius:5px; transition:width .5s ease;}
+  .barrow .val{width:150px; flex:none; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); text-align:right;}
+  .na-note{color:var(--muted-2); font-size:11.5px; font-style:italic; margin-top:14px;}
+
+  /* ---------- Tooltip ---------- */
+  #tooltip{
+    position:fixed; z-index:50; max-width:300px; background:#FFFFFF; border:1px solid var(--glow);
+    color:var(--text); padding:12px 14px; border-radius:8px; font-size:12.5px; line-height:1.5;
+    box-shadow:0 12px 32px rgba(0,0,0,.14); pointer-events:none; opacity:0; transition:opacity .12s ease;
+  }
+  #tooltip.show{opacity:1;}
+  #tooltip .yr{font-family:'IBM Plex Mono',monospace; color:var(--glow); font-size:11px; margin-bottom:5px; display:block;}
+
+  /* ---------- Commentary ---------- */
+  .cc-company{border:1px solid var(--line); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; background:var(--panel);}
+  .cc-head{width:100%; display:flex; align-items:center; gap:10px; padding:13px 16px; background:transparent; border:none; cursor:pointer; text-align:left; font-family:'Inter',sans-serif;}
+  .cc-head:hover{background:var(--panel-2);}
+  .cc-head .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .cc-head .cc-name{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px; color:var(--text);}
+  .cc-head .cc-mod{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.04em;}
+  .cc-head .cc-count{margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted);}
+  .cc-head .chev{font-size:14px; color:var(--muted-2); transition:transform .15s ease;}
+  .cc-head .chev.open{transform:rotate(180deg);}
+  .cc-body{padding:2px 16px 14px; border-top:1px solid var(--line);}
+  .cc-row{padding:12px 0; border-bottom:1px solid var(--line);}
+  .cc-row:last-child{border-bottom:none;}
+  .cc-meta{display:flex; align-items:center; gap:9px; margin-bottom:7px; flex-wrap:wrap;}
+  .cc-year{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text); font-weight:600;}
+  .cc-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; padding:2px 8px; border-radius:10px; text-transform:uppercase; letter-spacing:.04em; flex:none;}
+  .cc-tag.past{background:var(--panel-2); color:var(--muted);}
+  .cc-tag.future{background:var(--glow-dim); color:var(--glow);}
+  .cc-milestone{font-size:12px; color:var(--muted); flex:1; min-width:200px;}
+  .cc-textarea{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; color:var(--text);
+    font-family:'Inter',sans-serif; font-size:12.5px; padding:9px 11px; resize:vertical; min-height:56px; line-height:1.5;
+  }
+  .cc-textarea:focus{outline:none; border-color:var(--glow);}
+  .cc-textarea::placeholder{color:var(--muted-2); white-space:pre-line;}
+  .cc-textarea.ro{background:transparent; color:var(--muted); cursor:default;}
+  .cc-textarea.ro:focus{border-color:var(--line);}
+
+
+  @media (max-width:720px){
+    .stat{min-width:44%;}
+    .barrow .name{width:120px;}
+    .barrow .val{width:110px; font-size:10.5px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Quantum Hardware <span>Roadmap</span></h1>
+    <p class="sub">Publicly stated roadmaps from 21 quantum hardware vendors across 8 modalities, 2020–2029. Filter by modality or vendor, scan year-by-year milestones, and compare current best performance metrics.</p>
+    <div class="statbar" id="statbar"></div>
+  </header>
+
+  <div class="step">
+    <div class="step-h"><span class="num">1</span><h2>Filter by modality</h2><span class="hint">click to toggle all vendors of that type</span></div>
+    <div class="chiprow" id="modChips"></div>
+  </div>
+
+  <div class="step">
+    <div class="step-h"><span class="num">2</span><h2>Choose vendors</h2><span class="hint">fine-tune the selection</span></div>
+    <div class="searchrow">
+      <input type="search" id="search" placeholder="Search vendor name…">
+      <span class="selcount"><b id="selN">21</b> of 21 vendors selected</span>
+    </div>
+    <div class="companygrid" id="coGrid"></div>
+  </div>
+
+  <div class="step">
+    <div class="step-h"><span class="num">3</span><h2>Explore</h2><span class="hint">qubit-count trajectory by planned year, the full milestone table, or current performance</span></div>
+    <div class="searchrow">
+      <div class="viewtoggle">
+        <button data-view="graph" class="active">Graph</button>
+        <button data-view="table">Table</button>
+        <button data-view="metrics">Metrics</button>
+      </div>
+    </div>
+
+    <div id="graphView">
+      <div class="chart-card">
+        <h3>Qubit count by planned year</h3>
+        <div class="desc">Physical or logical qubit count vendors have stated (or targeted) for each year, log scale. Hover any point for the device codename and details.</div>
+        <div id="graphSvgWrap"></div>
+        <div class="na-note" id="graphNote" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div id="tableView" style="display:none;">
+      <div class="timeline-wrap">
+        <table class="tl">
+          <thead><tr id="tlHead"></tr></thead>
+          <tbody id="tlBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="metricsView" style="display:none;">
+      <div class="metric-controls" id="metricBtns"></div>
+      <div class="chart-card">
+        <h3 id="metricTitle"></h3>
+        <div class="desc" id="metricDesc"></div>
+        <div id="metricBars"></div>
+        <div class="na-note" id="metricNote" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-h"><span class="num">4</span><h2>Commentary</h2><span class="hint" id="storageHint"></span><button id="adminToggle" class="admin-btn"></button></div>
+    <div id="commentaryList"></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// Quantum Hardware Roadmap — structured data
+// Transcribed from the user's source deck (Quantum_Hardware_Roadmap_Interactive.pptx)
+// years[0..9] correspond to 2020..2029
+
+const MODALITIES = {
+  SC: { label: "Superconducting", color: "#D6182F" },
+  TI: { label: "Trapped Ion", color: "#7A0E1B" },
+  NA: { label: "Neutral Atom", color: "#EB4D5C" },
+  PH: { label: "Photonic", color: "#3D3D3D" },
+  SS: { label: "Silicon Spin", color: "#A8121F" },
+  QD: { label: "Quantum Dots", color: "#8C5B5B" },
+  TO: { label: "Topological", color: "#F2909C" },
+  CQ: { label: "Cat Qubits", color: "#4D0912" },
+  NV: { label: "NV Centers", color: "#9A9A9A" },
+};
+
+const YEARS = [2020,2021,2022,2023,2024,2025,2026,2027,2028,2029];
+
+const DATA = [
+{
+  id:"ibm", company:"IBM", modality:"SC",
+  years:[
+    "Hummingbird (65 qubits)",
+    "Eagle (127 qubits)",
+    "Osprey (433 qubits)",
+    "Condor (1,121 qubits)",
+    "Heron r2 – 156 qubits; 5,000-gate-class target",
+    "Nighthawk – 120 qubits; up to 5,000 two-qubit gates",
+    "Nighthawk – up to 3× 120-qubit modules (360 qubits); 7,500 gates + Kookaburra logical-memory prototype",
+    "Nighthawk – up to 1,080 qubits; 10,000 gates + Cockatoo modular entanglement",
+    "Nighthawk – up to 1,080 qubits; 15,000 gates + Starling FT proof-of-concept / magic-state distillation",
+    "Starling – 200 logical qubits; 100 million gates; large-scale fault tolerant"
+  ],
+  qubits:[65,127,433,1121,156,120,360,1080,1080,200],
+  qtype:["physical","physical","physical","physical","physical","physical","physical","physical","physical","logical"],
+  codename:["Hummingbird","Eagle","Osprey","Condor","Heron r2","Nighthawk","Nighthawk","Nighthawk","Nighthawk","Starling"],
+  ft:"Starling in 2029", ftYear:2029,
+  metrics:{ fidelityPct:99.85, fidelityLabel:"99.85%", gateTimeNs:68, gateTimeLabel:"~68 ns", qops:1.5e7, qopsLabel:"~1.5 × 10⁷", coherenceS:150e-6, coherenceLabel:"150 µs / 100 µs" }
+},
+{
+  id:"google", company:"Google Quantum AI", modality:"SC",
+  years:[
+    "Sycamore – 53 qubits; continued hardware/error-correction research",
+    "Sycamore – error-correction scaling experiments",
+    "Surface-code QEC experiments / scaling toward logical qubit",
+    "Milestone 2: Logical-qubit prototype / scalable error suppression",
+    "Willow – 105 qubits; below-threshold QEC",
+    "Willow – 105 qubits; Quantum Echoes / verifiable quantum advantage",
+    "Target: Milestone 3 – long-lived logical qubit (no official year)",
+    "Future: logical qubit / logical gate scaling (no official year)",
+    "Future milestone – engineering scale-up (no official year)",
+    "Future: large error-corrected quantum computer (no official year)"
+  ],
+  qubits:[53,null,null,null,105,105,null,null,null,null],
+  qtype:["physical",null,null,null,"physical","physical",null,null,null,null],
+  codename:["Sycamore",null,null,"Milestone 2","Willow","Willow","Milestone 3",null,null,null],
+  ft:"Long-lived logical qubit (Milestone 3); large-scale error-corrected QC targeted ~end of decade", ftYear:2029,
+  metrics:{ fidelityPct:99.88, fidelityLabel:"99.88%", gateTimeNs:70.7, gateTimeLabel:"~50–100 ns", qops:1.41e7, qopsLabel:"~10⁷–2×10⁷", coherenceS:89e-6, coherenceLabel:"68 µs / 89 µs" }
+},
+{
+  id:"rigetti", company:"Rigetti Computing", modality:"SC",
+  years:[
+    "Aspen-8 – 31 qubits",
+    "Aspen-M – 80 qubits; multi-chip architecture",
+    "Aspen-M – 80 qubits / Ankaa development",
+    "Ankaa-1, Ankaa-2 – 84 qubits",
+    "Ankaa-3 – 84 qubits; 99.5% median 2Q fidelity",
+    "Cepheus-1-36Q – 36 qubits / development of 108Q system",
+    "Cepheus-1-108Q – 108 qubits; modular chiplets",
+    "1,000+ qubit system target",
+    "Not publicly specified",
+    "Quantum advantage target ≈2029"
+  ],
+  qubits:[31,80,80,84,84,36,108,1000,null,null],
+  qtype:["physical","physical","physical","physical","physical","physical","physical",null,null,null],
+  codename:["Aspen-8","Aspen-M","Aspen-M","Ankaa-1/Ankaa-2","Ankaa-3","Cepheus-1-36Q","Cepheus-1-108Q",null,null,null],
+  ft:"Logical gates + 1,000+ physical qubits ~2029+", ftYear:2029,
+  metrics:{ fidelityPct:99.50, fidelityLabel:"99.50%", gateTimeNs:63.5, gateTimeLabel:"~56–72 ns", qops:1.58e7, qopsLabel:"~1.4–1.8 × 10⁷", coherenceS:32e-6, coherenceLabel:"~32 µs / ~18 µs" }
+},
+{
+  id:"iqm", company:"IQM Quantum Computers", modality:"SC",
+  years:[
+    "VTT/IQM national QC program launched",
+    "5-qubit VTT/IQM system",
+    "5Q system / 20Q development",
+    "20-qubit VTT/IQM system",
+    "20Q systems + 54Q/150Q Radiance architecture",
+    "Radiance 54Q / Emerald 54Q; 150Q architecture",
+    "20Q deployments + QEC experiments; scaling roadmap",
+    "Future QEC / FT development",
+    "Scaling toward FT systems",
+    "Toward fault-tolerant systems"
+  ],
+  qubits:[null,5,5,20,20,54,20,null,null,null],
+  qtype:[null,"physical","physical","physical","physical","physical","physical",null,null,null],
+  codename:[null,"VTT/IQM","VTT/IQM","VTT/IQM","Radiance","Radiance/Emerald",null,null,null,null],
+  ft:"Fully QEC-enabled FTQC; hundreds of high-precision logical qubits, scaling toward 1M physical qubits ~2030+", ftYear:2030,
+  metrics:{ fidelityPct:99.5, fidelityLabel:"99.5%", gateTimeNs:60, gateTimeLabel:"~60 ns", qops:1.7e7, qopsLabel:"~1.7 × 10⁷", coherenceS:100e-6, coherenceLabel:"~100 µs / ~80 µs" }
+},
+{
+  id:"oqc", company:"OQC (Oxford Quantum Circuits)", modality:"SC",
+  years:[
+    "Coaxmon hardware development",
+    "Lucy – 8 physical qubits",
+    "Lucy – 8Q; first QCaaS / data-center deployments",
+    "Toshiko – 32 physical qubits",
+    "Toshiko – 32 physical qubits; global deployments",
+    "Toshiko + Dimon / logical-era development",
+    "Genesis – 16 logical qubits; 1K+ operations",
+    "Genesis – 16 logical qubits / scaling",
+    "Titan – 200 logical qubits; 1M operations",
+    "Titan / commercial-advantage era"
+  ],
+  qubits:[null,8,8,32,32,null,16,16,200,null],
+  qtype:[null,"physical","physical","physical","physical",null,"logical","logical","logical",null],
+  codename:["Coaxmon","Lucy","Lucy","Toshiko","Toshiko","Toshiko/Dimon","Genesis","Genesis","Titan","Titan"],
+  ft:"2034 — Atlas: 50K logical qubits; 10⁻¹² logical error rate; large-scale FTQC", ftYear:2034,
+  metrics:{ fidelityPct:99, fidelityLabel:"99%", gateTimeNs:150, gateTimeLabel:"~150 ns", qops:6.7e6, qopsLabel:"~6.7 × 10⁶", coherenceS:75e-6, coherenceLabel:"~75 µs / ~50 µs" }
+},
+{
+  id:"ionq", company:"IonQ", modality:"TI",
+  years:[
+    "Harmony – 11 physical qubits",
+    "Harmony – 11Q / Aria development",
+    "Aria – 25 physical qubits / #AQ 20",
+    "Forte – 32 physical qubits / #AQ 29",
+    "Forte – 36Q / #AQ 36",
+    "Tempo – 100 physical qubits / #AQ 64 achieved",
+    "100–256+ physical Q + 12 logical Q target",
+    "10,000 physical Q + 800 logical Q target",
+    "20,000 physical Q + 1,600 logical Q + photonic interconnect",
+    "200,000 physical Q + 8,000 logical Q target"
+  ],
+  qubits:[11,11,25,32,36,100,256,10000,20000,200000],
+  qtype:["physical","physical","physical","physical","physical","physical","physical","physical","physical","physical"],
+  codename:["Harmony","Harmony","Aria","Forte","Forte","Tempo",null,null,null,null],
+  ft:"2030 — 80K logical qubits; <10⁻¹² logical error; large-scale FTQC", ftYear:2030,
+  metrics:{ fidelityPct:99.6, fidelityLabel:"99.6%", gateTimeNs:600000, gateTimeLabel:"~600 µs", qops:1700, qopsLabel:"~1.7 × 10³", coherenceS:31.6, coherenceLabel:"10–100 s / ~1 s" }
+},
+{
+  id:"quantinuum", company:"Quantinuum", modality:"TI",
+  years:[
+    "H0 – 6Q; H1 launched – 10Q",
+    "H1-1 – 12 physical qubits",
+    "H1-1 – 20 physical qubits",
+    "H2-1 – 32 physical qubits",
+    "H2 – 56 physical qubits + logical-QEC demonstrations",
+    "Helios – 98 physical qubits; 50 error-detected logical qubits",
+    "Helios era / fault-tolerant logical operations; Sol development",
+    "Sol / scaling toward Apollo",
+    "Apollo development / FT scaling",
+    "Apollo – hundreds of logical qubits, millions of operations target"
+  ],
+  qubits:[10,12,20,32,56,98,null,null,null,null],
+  qtype:["physical","physical","physical","physical","physical","physical",null,null,null,null],
+  codename:["H1","H1-1","H1-1","H2-1","H2","Helios","Helios/Sol","Sol","Apollo","Apollo"],
+  ft:"2029 — Apollo: universal FTQC, 100s of logical qubits", ftYear:2029,
+  metrics:{ fidelityPct:99.9, fidelityLabel:">99.9%", gateTimeNs:250000, gateTimeLabel:"~250 µs", qops:4000, qopsLabel:"~4.0 × 10³", coherenceS:60, coherenceLabel:">60 s / N/A" }
+},
+{
+  id:"aqt", company:"AQT", modality:"TI",
+  years:[
+    "Trapped-ion / rack-mounted system development",
+    "AQT trapped-ion systems / early deployments",
+    "20-qubit-class trapped-ion system development",
+    "20 physical qubits; PINE system",
+    "20 physical qubits; PINE / IBEX systems",
+    "20 physical qubits; high-fidelity trapped-ion systems",
+    "LYNX Series – 20Q-class; QV 32,768",
+    "No firm public annual milestone",
+    "No firm public annual milestone",
+    "No firm public annual milestone"
+  ],
+  qubits:[null,null,20,20,20,20,20,null,null,null],
+  qtype:[null,null,"physical","physical","physical","physical","physical",null,null,null],
+  codename:[null,null,null,"PINE","PINE/IBEX",null,"LYNX",null,null,null],
+  ft:"2026 — Measurement-free universal FT logical computation demonstrated; large-scale FTQC date N/P", ftYear:2026,
+  metrics:{ fidelityPct:97.7, fidelityLabel:"97.7%", gateTimeNs:200000, gateTimeLabel:"~200 µs", qops:5000, qopsLabel:"~5.0 × 10³", coherenceS:1.1, coherenceLabel:"~1.1 s / ~1 s" }
+},
+{
+  id:"quera", company:"QuEra Computing", modality:"NA",
+  years:[
+    "Neutral-atom R&D / programmable arrays",
+    "256-qubit neutral-atom system unveiled",
+    "Aquila – 256 physical qubits; launched on AWS",
+    "Aquila – 256Q + 48-logical-qubit research demonstration",
+    "Aquila + QEC / logical-qubit development",
+    "Gemini – 260 physical qubits; QEC testbed",
+    "Gemini / FT development; 96-logical-qubit FT research demonstrated",
+    "Libra development",
+    "Libra – 10K physical / 256 logical qubits",
+    "Next Gen – 20K physical / 1,000+ logical qubits"
+  ],
+  qubits:[null,256,256,256,null,260,null,null,10000,20000],
+  qtype:[null,"physical","physical","physical",null,"physical",null,null,"physical","physical"],
+  codename:[null,null,"Aquila","Aquila","Aquila","Gemini","Gemini","Libra","Libra","Next Gen"],
+  ft:"2028 — Libra: 256 logical qubits; 10⁻⁶ logical error; Megaquop FTQC", ftYear:2028,
+  metrics:{ fidelityPct:99.7, fidelityLabel:"~99.7%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"1.0 × 10⁶", coherenceS:null, coherenceLabel:"Not Publicly Reported" }
+},
+{
+  id:"pasqal", company:"Pasqal", modality:"NA",
+  years:[
+    "Neutral-atom R&D / Pasqal development",
+    "100Q+ Fresnel development / HPCQS program",
+    "Fresnel / Orion Alpha – 100+Q; 324-atom R&D demo",
+    "Fresnel / Orion Alpha – 100+ physical Q; customer deployment",
+    "Orion – 100+Q commercial; >1,000 atoms trapped in R&D",
+    "Orion Gamma – 140–200+Q; 2 logical-Q milestone",
+    "Vela – 200+Q; quantum-advantage target; scaling toward 1,000 physical Q",
+    "Centaurus – analog + early FTQC; ~20 logical Q target",
+    "Lyra / scaling toward 10K–50K physical Q*",
+    "~200 logical Q; ~10⁻⁶ logical error / MegaQuOps target"
+  ],
+  qubits:[null,100,100,100,100,200,200,20,50000,200],
+  qtype:[null,"physical","physical","physical","physical","physical","physical","logical","physical","logical"],
+  codename:[null,"Fresnel","Fresnel/Orion Alpha","Fresnel/Orion Alpha","Orion","Orion Gamma","Vela","Centaurus","Lyra",null],
+  ft:"2029 — 200+ logical qubits; MegaQuOps; early fault-tolerant QC", ftYear:2029,
+  metrics:{ fidelityPct:null, fidelityLabel:"Not Publicly Reported", gateTimeNs:null, gateTimeLabel:"Not Publicly Reported", qops:null, qopsLabel:"Not Publicly Reported", coherenceS:null, coherenceLabel:"Not Publicly Reported" }
+},
+{
+  id:"atomcomputing", company:"Atom Computing", modality:"NA",
+  years:[
+    "Phoenix development – 100Q prototype",
+    "Phoenix – 100 physical qubits",
+    "Phoenix / second-gen development",
+    "Second-gen system – 1,180 physical qubits",
+    "1,180Q system + logical-qubit demonstrations",
+    "AC1000 – 1,200+ physical Q; logical-Q capable",
+    "AC1000 + repeated QEC / toric-code demonstration",
+    "FTQC scaling / next-generation systems",
+    "No firm public annual hardware target",
+    "Toward utility-scale FTQC"
+  ],
+  qubits:[100,100,null,1180,1180,1200,null,null,null,null],
+  qtype:["physical","physical",null,"physical","physical","physical",null,null,null,null],
+  codename:["Phoenix","Phoenix","Phoenix","Second-gen system","Second-gen system","AC1000","AC1000",null,null,null],
+  ft:"2024 — 24 logical qubits; fault-tolerant logical operation demonstrated", ftYear:2024,
+  metrics:{ fidelityPct:99.6, fidelityLabel:">99.6%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:40, coherenceLabel:"N/P / ~40 s" }
+},
+{
+  id:"infleqtion", company:"Infleqtion", modality:"NA",
+  years:[
+    "ColdQuanta neutral-atom R&D / Hilbert development",
+    "Hilbert / neutral-atom QC development",
+    "ColdQuanta → Infleqtion; Hilbert development",
+    "Sqale / Hilbert development; high-fidelity gates",
+    "99.73% CZ fidelity; logical materials-science demo",
+    "Sqale – 100+ physical Q; arrays up to 1,600 sites; 12 logical Q",
+    "30 logical-Q target; 500+ physical-Q next-gen target",
+    "Logical-Q / QEC scaling",
+    "100+ logical Q; MegaQuOp target",
+    "Scaling toward >1,000 logical Q by 2030"
+  ],
+  qubits:[null,null,null,null,null,100,500,null,100,1000],
+  qtype:[null,null,null,null,null,"physical","physical",null,"logical","logical"],
+  codename:["Hilbert","Hilbert","Hilbert","Sqale/Hilbert",null,"Sqale",null,null,null,null],
+  ft:"2030 — 1,000+ logical qubits; full-stack fault-tolerant QC", ftYear:2030,
+  metrics:{ fidelityPct:98.8, fidelityLabel:"~98.8%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:null, coherenceLabel:"N/P / N/P" }
+},
+{
+  id:"psiquantum", company:"PsiQuantum", modality:"PH",
+  years:[
+    "Silicon-photonic FTQC development",
+    "Q1 chips – high-volume semiconductor manufacturing",
+    "Q1 / silicon-photonic component scaling",
+    "Manufacturing + system-integration scaling",
+    "Brisbane + Chicago utility-scale projects announced",
+    "Omega chipset + utility-scale system integration",
+    "Omega scaling + Brisbane construction / multi-chip integration",
+    "Utility-scale FTQC system integration",
+    "Million-qubit-scale FTQC deployment target",
+    "Utility-scale FTQC / applications"
+  ],
+  qubits:[null,null,null,null,null,null,null,null,1000000,null],
+  qtype:[null,null,null,null,null,null,null,null,"physical",null],
+  codename:[null,"Q1","Q1",null,null,"Omega","Omega",null,null,null],
+  ft:"~2027 — Utility-scale FTQC; ~1M physical photonic qubits", ftYear:2027,
+  metrics:{ fidelityPct:99.22, fidelityLabel:"99.22%", gateTimeNs:null, gateTimeLabel:"N/A", qops:null, qopsLabel:"N/A", coherenceS:null, coherenceLabel:"N/A (photons)" }
+},
+{
+  id:"xanadu", company:"Xanadu", modality:"PH",
+  years:[
+    "X8/X12 cloud photonic systems – 8/12 qubits",
+    "X8/X12 / Borealis development",
+    "Borealis – 216 squeezed-state qubits; quantum advantage",
+    "Aurora development / FTQC architecture",
+    "Aurora completed – 12 physical qubit modes, 35 photonic chips",
+    "Aurora + 12 logical GKP qubits / real-time error correction",
+    "Qubit factory / component-performance scaling",
+    "Qubit factory / FTQC scaling",
+    "Fault-tolerant quantum computing target",
+    "Up to ~500 logical qubits / quantum data center target"
+  ],
+  qubits:[12,12,216,null,12,12,null,null,null,500],
+  qtype:["physical","physical","physical",null,"physical","logical",null,null,null,"logical"],
+  codename:["X8/X12","X8/X12","Borealis","Aurora","Aurora","Aurora","Qubit factory","Qubit factory",null,null],
+  ft:"2028 — Fault-tolerant operations → 2029–30: up to 500 logical qubits (~100K physical)", ftYear:2028,
+  metrics:{ fidelityPct:null, fidelityLabel:"N/P", gateTimeNs:null, gateTimeLabel:"N/A", qops:null, qopsLabel:"N/A", coherenceS:null, coherenceLabel:"N/A (photons)" }
+},
+{
+  id:"orca", company:"ORCA Computing", modality:"PH",
+  years:[
+    "Photonic QC / quantum-memory R&D",
+    "ORCA architecture development",
+    "PT-1 development / photonic QC platform",
+    "PT-1 commercial deployments",
+    "PT-2 unveiled – 40 qumodes",
+    "PT-2 – 40 qumodes / NQCC deployment",
+    "PT-2 enterprise deployment / hybrid quantum-AI",
+    "No firm public annual target",
+    "Modular / networked scaling",
+    "Toward fault-tolerant / useful QC"
+  ],
+  qubits:[null,null,null,null,40,40,null,null,null,null],
+  qtype:[null,null,null,null,"physical","physical",null,null,null,null],
+  codename:[null,null,"PT-1","PT-1","PT-2","PT-2","PT-2",null,null,null],
+  ft:"Future — Universal fault-tolerant photonic QC; date/count N/P", ftYear:9999,
+  metrics:{ fidelityPct:null, fidelityLabel:"N/P", gateTimeNs:null, gateTimeLabel:"N/A", qops:null, qopsLabel:"N/A", coherenceS:null, coherenceLabel:"N/A (photons)" }
+},
+{
+  id:"intel", company:"Intel (Silicon Spin)", modality:"SS",
+  years:[
+    "Horse Ridge / Horse Ridge II cryogenic control",
+    "Silicon spin-qubit + cryogenic-control R&D",
+    "300-mm CMOS spin-qubit development",
+    "Tunnel Falls – 12Q / 95% wafer yield",
+    "99.9% 1Q fidelity + Pando Tree cryo-control",
+    "Next-gen spin-qubit / 2D-array development",
+    "Scaling + fidelity / CMOS integration",
+    "No firm public annual target",
+    "No firm public annual target",
+    "Toward fault-tolerant quantum practicality"
+  ],
+  qubits:[null,null,null,12,null,null,null,null,null,null],
+  qtype:[null,null,null,"physical",null,null,null,null,null,null],
+  codename:["Horse Ridge II",null,null,"Tunnel Falls",null,null,null,null,null,null],
+  ft:"Future — >1M physical qubits for large-scale FTQC; date/logical-qubit count N/P", ftYear:9999,
+  metrics:{ fidelityPct:99, fidelityLabel:">99%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:9.5, coherenceLabel:"~9.5 s / ~1.9 ms" }
+},
+{
+  id:"diraq", company:"Diraq (Quantum Dots)", modality:"QD",
+  years:[
+    "UNSW silicon spin-qubit R&D",
+    "High-fidelity silicon spin-Q R&D",
+    "Diraq founded / spun out from UNSW",
+    "Silicon CMOS spin-Q scaling / foundry development",
+    "CMOS spin-Q / multi-dot scaling R&D",
+    "300-mm CMOS qubits; >99% operations",
+    "8Q CMOS array / industrial 300-mm process",
+    "Scaling toward QEC",
+    "CMOS QPU scaling",
+    "Toward utility-scale FTQC"
+  ],
+  qubits:[null,null,null,null,null,null,8,null,null,null],
+  qtype:[null,null,null,null,null,null,"physical",null,null,null],
+  codename:[null,null,null,null,null,null,null,null,null,null],
+  ft:"2031 — Millions of physical qubits; utility-scale, error-corrected FTQC", ftYear:2031,
+  metrics:{ fidelityPct:99, fidelityLabel:">99%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:9.5, coherenceLabel:"~9.5 s / ~1.9 ms" }
+},
+{
+  id:"quantummotion", company:"Quantum Motion", modality:"SS",
+  years:[
+    "Silicon spin-qubit / CMOS R&D",
+    "CMOS spin-qubit scaling R&D",
+    "Integrated quantum/classical silicon development",
+    "Pipeline architecture / scalable spin-Q architecture",
+    "CMOS QPU + integrated control development",
+    "Full-stack CMOS quantum computer / NQCC deployment",
+    "Industrial CMOS scaling / next-gen QPU development",
+    "No firm public annual target",
+    "Toward million-qubit-scale architecture",
+    "Toward fault-tolerant QC"
+  ],
+  qubits:[null,null,null,null,null,null,null,null,1000000,null],
+  qtype:[null,null,null,null,null,null,null,null,"physical",null],
+  codename:[null,null,null,null,null,null,null,null,null,null],
+  ft:"Future — 1M+ physical qubits; large-scale silicon FTQC; timeline N/P", ftYear:9999,
+  metrics:{ fidelityPct:98, fidelityLabel:"~98%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:null, coherenceLabel:"N/P / N/P" }
+},
+{
+  id:"microsoft", company:"Microsoft", modality:"TO",
+  years:[
+    "Topological materials / Majorana R&D",
+    "Majorana / topological-device R&D",
+    "Topological-device development",
+    "Create & control Majoranas – Milestone 1",
+    "Hardware-protected qubit development",
+    "Majorana 1 / Topological Core / 8Q chip",
+    "Majorana 2 / 1,000× reliability improvement",
+    "Multi-qubit + QEC scaling",
+    "Fault-tolerant prototype / scaling",
+    "Scalable, practical quantum computer target"
+  ],
+  qubits:[null,null,null,null,null,8,null,null,null,null],
+  qtype:[null,null,null,null,null,"physical",null,null,null,null],
+  codename:[null,null,null,"Milestone 1",null,"Majorana 1","Majorana 2",null,null,null],
+  ft:"2029 — Scalable practical topological QC; ≥1M rQOPS/s & <10⁻¹² error ultimate FTQC target", ftYear:2029,
+  metrics:{ fidelityPct:null, fidelityLabel:"N/P", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:20, coherenceLabel:"~20 s / N/P" }
+},
+{
+  id:"aliceandbob", company:"Alice & Bob", modality:"CQ",
+  years:[
+    "Cat-qubit / bit-flip protection research",
+    "Cat-qubit development",
+    "Cat-qubit control / error-bias development",
+    "10+ sec bit-flip protection / Helium 1 tape-out",
+    "Boson 4 – 7-min bit-flip lifetime",
+    "Helium development / >1-hour bit-flip result",
+    "Helium – first logical-Q development",
+    "Lithium – FT logical gates",
+    "Beryllium – universal logical gates",
+    "Graphene scaling toward useful QC"
+  ],
+  qubits:[null,null,null,null,null,null,1,null,null,null],
+  qtype:[null,null,null,null,null,null,"logical",null,null,null],
+  codename:[null,null,null,"Helium 1","Boson 4","Helium","Helium","Lithium","Beryllium","Graphene"],
+  ft:"2030 — Graphene: 100 logical qubits; ~10⁻⁸ logical error; early FTQC", ftYear:2030,
+  metrics:{ fidelityPct:null, fidelityLabel:"N/P", gateTimeNs:null, gateTimeLabel:"N/P", qops:null, qopsLabel:"N/P", coherenceS:430, coherenceLabel:">430 s / N/P" }
+},
+{
+  id:"quantumbrilliance", company:"Quantum Brilliance", modality:"NV",
+  years:[
+    "Diamond NV / room-temp QPU development",
+    "Atom-scale fabrication / edge-QC PoC",
+    "Pawsey – first room-temp diamond accelerator",
+    "Hydrogen depassivation lithography / scaling",
+    "QDK 2.0 / Fraunhofer + ORNL HPC integration",
+    "Quoll – 3-QPU cluster / Quantum Diamond Foundry",
+    "Smart-diamond / integrated-chip scaling",
+    "Integrated quantum-chip scaling",
+    "Miniaturization / mass-manufacturing",
+    "Toward scalable FTQC / quantum utility"
+  ],
+  qubits:[null,null,null,null,null,null,null,null,null,null],
+  qtype:[null,null,null,null,null,null,null,null,null,null],
+  codename:[null,null,"Pawsey",null,"QDK 2.0","Quoll",null,null,null,null],
+  ft:"Future — Scalable fault-tolerant diamond NV QC; timeline N/P", ftYear:9999,
+  metrics:{ fidelityPct:99, fidelityLabel:">99%", gateTimeNs:1000, gateTimeLabel:"~1 µs", qops:1e6, qopsLabel:"~1.0 × 10⁶", coherenceS:1e-3, coherenceLabel:"N/P / >1 ms" }
+},
+];
+
+</script>
+<script>
+const CURRENT_YEAR = 2025; // "now" marker — aligns with deck's "Current Best (2024–2025)" column
+
+let selected = new Set(DATA.map(d=>d.id));
+let search = "";
+let view = "graph";
+let metric = "fidelity";
+let expandedCompanies = new Set();
+let commentary = {}; // key: `${companyId}:${yearIndex}` -> note text
+let isAdmin = false;
+let adminPassword = null;
+
+const SUPABASE_URL = 'https://nxaxoqgejfubwfmbhmup.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54YXhvcWdlamZ1YndmbWJobXVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMTU5NDcsImV4cCI6MjEwMTY5MTk0N30.5Dpay2Pg0jP7ODOowdv-_gVlLJNoLL-uDcMdyUIKybU';
+const SB_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
+
+const METRIC_DEFS = {
+  fidelity: { label:"2-Qubit Fidelity (avg.)", get:d=>d.metrics.fidelityPct, fmt:d=>d.metrics.fidelityLabel,
+    desc:"Average two-qubit gate fidelity, as currently claimed by each vendor. Linear scale, zoomed to 95–100%.",
+    min:95, max:100, unit:"%" },
+  gate: { label:"Typical Gate Time", get:d=>d.metrics.gateTimeNs, fmt:d=>d.metrics.gateTimeLabel,
+    desc:"Typical two-qubit gate duration in nanoseconds (log scale — lower is faster). Ranges are shown as their geometric mean.",
+    log:true, unit:"ns" },
+  qops: { label:"QOPS (2-qubit)", get:d=>d.metrics.qops, fmt:d=>d.metrics.qopsLabel,
+    desc:"Approximate quantum operations per second, 2-qubit gates (log scale — higher is faster).",
+    log:true, unit:"" },
+  coherence: { label:"Coherence (T1 / T2)", get:d=>d.metrics.coherenceS, fmt:d=>d.metrics.coherenceLabel,
+    desc:"Representative coherence time in seconds (log scale — longer is better). Not applicable to photonic architectures, which carry no stored quantum state.",
+    log:true, unit:"s" },
+};
+
+function modColor(mod){ return MODALITIES[mod].color; }
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ---------------- persistent commentary storage (Supabase) ---------------- */
+async function loadCommentary(){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/roadmap_comments?select=company_id,year_index,note`, { headers: SB_HEADERS });
+    if(!res.ok) throw new Error('load failed: '+res.status);
+    const rows = await res.json();
+    rows.forEach(r=>{ if(r.note) commentary[r.company_id+':'+r.year_index] = r.note; });
+  }catch(e){
+    console.error('Supabase load failed', e);
+    flashHint('Could not load saved notes from Supabase.');
+  }
+}
+const saveTimers = {};
+function scheduleSave(cid, yi){
+  const key = cid+':'+yi;
+  clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(()=>saveOne(cid,yi), 700);
+}
+async function saveOne(cid, yi){
+  if(!isAdmin){ return; } // belt-and-braces — UI already prevents this, server enforces it regardless
+  const note = commentary[cid+':'+yi] || '';
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-comment`, {
+      method:'POST',
+      headers:{ ...SB_HEADERS, 'Content-Type':'application/json' },
+      body: JSON.stringify({ password: adminPassword, action:'save', company_id:cid, year_index:Number(yi), note })
+    });
+    if(!res.ok) throw new Error('save failed: '+res.status);
+    flashHint('Saved ✓');
+  }catch(e){
+    console.error('Save failed', e);
+    flashHint('Save failed — check your connection or admin session.');
+  }
+}
+async function verifyAdminPassword(pw){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-comment`, {
+      method:'POST',
+      headers:{ ...SB_HEADERS, 'Content-Type':'application/json' },
+      body: JSON.stringify({ password: pw, action:'verify' })
+    });
+    return res.ok;
+  }catch(e){ console.error('Admin verify failed', e); return false; }
+}
+async function handleAdminToggle(){
+  if(isAdmin){
+    isAdmin = false; adminPassword = null;
+    renderAdminButton(); renderCommentary();
+    return;
+  }
+  const pw = prompt('Enter admin password to add or edit commentary:');
+  if(pw==null || pw==='') return;
+  const ok = await verifyAdminPassword(pw);
+  if(ok){ isAdmin = true; adminPassword = pw; renderAdminButton(); renderCommentary(); }
+  else { alert('Incorrect password.'); }
+}
+function renderAdminButton(){
+  const btn = document.getElementById('adminToggle');
+  btn.textContent = isAdmin ? '🔓 Admin mode — sign out' : '🔒 Sign in as admin';
+  btn.classList.toggle('on', isAdmin);
+}
+function flashHint(msg){
+  const hint = document.getElementById('storageHint');
+  if(!hint) return;
+  clearTimeout(flashHint._t);
+  hint.textContent = msg;
+  flashHint._t = setTimeout(()=>{ hint.textContent = 'Notes are visible to everyone; only signed-in admins can add or edit them.'; }, 1700);
+}
+
+/* ---------------- shared tooltip ---------------- */
+const tip = document.getElementById('tooltip');
+function buildTipHTML(d,i){
+  const q = d.qubits[i], t = d.qtype[i], cn = d.codename[i];
+  let html = `<span class="yr">${d.company} · ${YEARS[i]}</span>`;
+  if(cn) html += `<div style="font-weight:600; font-family:'Space Grotesk',sans-serif; margin-bottom:2px;">${escapeHtml(cn)}</div>`;
+  if(q!=null) html += `<div style="color:var(--glow); font-family:'IBM Plex Mono',monospace; font-size:11px; margin-bottom:6px;">${q.toLocaleString()}${t?' '+t:''} qubits</div>`;
+  html += `<div>${d.years[i]}</div>`;
+  const note = commentary[d.id+':'+i];
+  if(note && note.trim()){
+    html += `<div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-style:italic; color:${MODALITIES.SC.color==='#D6182F'?'#8C0E1E':'var(--glow)'};">📝 ${escapeHtml(note)}</div>`;
+  }
+  return html;
+}
+function showTipAt(clientX, clientY, html){
+  tip.innerHTML = html;
+  tip.classList.add('show');
+  const x = Math.min(clientX+16, window.innerWidth-320);
+  const y = Math.min(clientY+16, window.innerHeight-160);
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+function hideTip(){ tip.classList.remove('show'); }
+
+function renderStats(){
+  const modsUsed = new Set(DATA.map(d=>d.modality));
+  const ft2030 = DATA.filter(d=>d.ftYear<=2030).length;
+  const stats = [
+    {n:DATA.length, l:"Vendors tracked"},
+    {n:modsUsed.size, l:"Modalities"},
+    {n:"2020–29", l:"Years covered"},
+    {n:ft2030, l:"Targeting fault tolerance by 2030"},
+  ];
+  document.getElementById('statbar').innerHTML = stats.map(s=>`<div class="stat"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
+}
+
+function renderModChips(){
+  const el = document.getElementById('modChips');
+  const chips = Object.entries(MODALITIES).map(([key,m])=>{
+    const ids = DATA.filter(d=>d.modality===key).map(d=>d.id);
+    const allIn = ids.every(id=>selected.has(id));
+    return `<div class="chip ${allIn?'active':''}" data-mod="${key}" style="color:${allIn?m.color:''}">
+      <span class="sw" style="background:${m.color}"></span>${m.label}
+    </div>`;
+  }).join('');
+  el.innerHTML = chips + `
+    <div class="chip util" data-action="all">All 21</div>
+    <div class="chip util" data-action="clear">Clear</div>`;
+
+  el.querySelectorAll('[data-mod]').forEach(c=>c.addEventListener('click', ()=>{
+    const key = c.dataset.mod;
+    const ids = DATA.filter(d=>d.modality===key).map(d=>d.id);
+    const allIn = ids.every(id=>selected.has(id));
+    ids.forEach(id=> allIn ? selected.delete(id) : selected.add(id));
+    renderAll();
+  }));
+  el.querySelector('[data-action=all]').addEventListener('click', ()=>{ selected = new Set(DATA.map(d=>d.id)); renderAll(); });
+  el.querySelector('[data-action=clear]').addEventListener('click', ()=>{ selected = new Set(); renderAll(); });
+}
+
+function renderCoGrid(){
+  const el = document.getElementById('coGrid');
+  const list = DATA.filter(d=> d.company.toLowerCase().includes(search.toLowerCase()) );
+  el.innerHTML = list.map(d=>{
+    const active = selected.has(d.id);
+    const c = modColor(d.modality);
+    return `<div class="co-chip ${active?'active':''}" data-id="${d.id}">
+      <span class="dot" style="background:${c}; color:${c};"></span>${d.company}
+    </div>`;
+  }).join('') || `<div style="color:var(--muted-2); font-size:13px;">No vendors match “${search}”.</div>`;
+
+  el.querySelectorAll('[data-id]').forEach(c=>c.addEventListener('click', ()=>{
+    const id = c.dataset.id;
+    selected.has(id) ? selected.delete(id) : selected.add(id);
+    renderAll();
+  }));
+
+  document.getElementById('selN').textContent = selected.size;
+}
+
+function visibleData(){
+  return DATA.filter(d=>selected.has(d.id))
+    .sort((a,b)=> a.modality===b.modality ? a.ftYear-b.ftYear : Object.keys(MODALITIES).indexOf(a.modality)-Object.keys(MODALITIES).indexOf(b.modality));
+}
+
+/* ---------------- graph view ---------------- */
+function renderGraph(){
+  const wrap = document.getElementById('graphSvgWrap');
+  const note = document.getElementById('graphNote');
+  const allRows = visibleData();
+  if(!allRows.length){
+    wrap.innerHTML = '';
+    note.style.display='block';
+    note.textContent = 'No vendors selected — pick some above.';
+    return;
+  }
+  const rows = allRows.filter(d=>d.qubits.some(q=>q!=null));
+  if(!rows.length){
+    wrap.innerHTML = '';
+    note.style.display='block';
+    note.textContent = 'None of the selected vendors have a disclosed qubit count for these years — try the Table view for full milestone text.';
+    return;
+  }
+  note.style.display='none';
+
+  const W=1200,H=560, ML=60,MR=150,MT=20,MB=44;
+  const plotW=W-ML-MR, plotH=H-MT-MB;
+  const yMin=1, yMax=1000000;
+  const logMin=Math.log10(yMin), logMax=Math.log10(yMax);
+  const xPos = i => ML + (i/(YEARS.length-1))*plotW;
+  const yPos = q => MT + plotH - ((Math.log10(Math.max(q,yMin))-logMin)/(logMax-logMin))*plotH;
+  const yTicks=[1,10,100,1000,10000,100000,1000000];
+  const tickLabel = v => v>=1000000?'1M':v>=1000?(v/1000)+'K':String(v);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; display:block;" font-family="IBM Plex Mono, monospace">`;
+  yTicks.forEach(v=>{
+    const y=yPos(v);
+    svg += `<line x1="${ML}" y1="${y.toFixed(1)}" x2="${W-MR}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`;
+    svg += `<text x="${ML-10}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="11" fill="var(--muted)">${tickLabel(v)}</text>`;
+  });
+  YEARS.forEach((y,i)=>{
+    const x=xPos(i);
+    svg += `<text x="${x.toFixed(1)}" y="${H-MB+22}" text-anchor="middle" font-size="11" fill="var(--muted)">${y}</text>`;
+    if(y===CURRENT_YEAR){
+      svg += `<line x1="${x.toFixed(1)}" y1="${MT}" x2="${x.toFixed(1)}" y2="${H-MB}" stroke="var(--glow)" stroke-width="1" stroke-dasharray="3,4" opacity="0.55"/>`;
+    }
+  });
+
+  const labelThreshold = 10;
+  rows.forEach(d=>{
+    const c = modColor(d.modality);
+    let runs=[], cur=[];
+    d.qubits.forEach((q,i)=>{ if(q!=null) cur.push(i); else { if(cur.length){runs.push(cur); cur=[];} } });
+    if(cur.length) runs.push(cur);
+    runs.forEach(run=>{
+      if(run.length>1){
+        const pts = run.map(i=>`${xPos(i).toFixed(1)},${yPos(d.qubits[i]).toFixed(1)}`).join(' ');
+        svg += `<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" opacity="0.85"/>`;
+      }
+    });
+    d.qubits.forEach((q,i)=>{
+      if(q==null) return;
+      svg += `<circle class="pt" data-cid="${d.id}" data-yi="${i}" cx="${xPos(i).toFixed(1)}" cy="${yPos(q).toFixed(1)}" r="4.5" fill="${c}" stroke="#fff" stroke-width="1.3" style="cursor:pointer;"/>`;
+    });
+    if(rows.length<=labelThreshold){
+      let lastIdx=null;
+      for(let i=d.qubits.length-1;i>=0;i--){ if(d.qubits[i]!=null){ lastIdx=i; break; } }
+      if(lastIdx!=null){
+        svg += `<text x="${(xPos(lastIdx)+9).toFixed(1)}" y="${(yPos(d.qubits[lastIdx])+4).toFixed(1)}" font-size="10.5" fill="${c}" font-weight="600">${escapeHtml(d.company)}</text>`;
+      }
+    }
+  });
+  svg += `</svg>`;
+  wrap.innerHTML = svg;
+
+  wrap.querySelectorAll('.pt').forEach(pt=>{
+    pt.addEventListener('mousemove', e=>{
+      const d = DATA.find(x=>x.id===pt.dataset.cid); const i=+pt.dataset.yi;
+      showTipAt(e.clientX, e.clientY, buildTipHTML(d,i));
+    });
+    pt.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* ---------------- table view ---------------- */
+function renderTimeline(){
+  const rows = visibleData();
+  const head = document.getElementById('tlHead');
+  head.innerHTML = `<th class="co">Vendor</th>` + YEARS.map(y=>`<th class="yr">${y}</th>`).join('') + `<th class="ft">Fault-tolerance / full-scale target</th>`;
+
+  const body = document.getElementById('tlBody');
+  if(!rows.length){
+    body.innerHTML = `<tr><td colspan="12" style="padding:30px; text-align:center; color:var(--muted-2);">No vendors selected — pick some above.</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(d=>{
+    const c = modColor(d.modality);
+    const cells = d.years.map((txt,i)=>{
+      const yr = YEARS[i];
+      const isNow = yr===CURRENT_YEAR;
+      return `<td class="yrcell ${isNow?'now':''}" data-cid="${d.id}" data-yi="${i}">
+        <div class="cellbox">${truncate(txt,42)}</div>
+      </td>`;
+    }).join('');
+    return `<tr>
+      <td class="co"><div class="co-cell"><span class="dot" style="background:${c}"></span><div>${d.company}<span class="mod">${MODALITIES[d.modality].label}</span></div></div></td>
+      ${cells}
+      <td class="ftcell"><span class="ftbadge">⚑ ${d.ft}</span></td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('.yrcell').forEach(td=>{
+    td.addEventListener('mousemove', e=>{
+      const d = DATA.find(x=>x.id===td.dataset.cid); const i=+td.dataset.yi;
+      showTipAt(e.clientX, e.clientY, buildTipHTML(d,i));
+    });
+    td.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* ---------------- metrics view ---------------- */
+function renderMetricBtns(){
+  const el = document.getElementById('metricBtns');
+  el.innerHTML = Object.entries(METRIC_DEFS).map(([k,m])=>
+    `<button class="metric-btn ${metric===k?'active':''}" data-m="${k}">${m.label}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ metric=b.dataset.m; renderMetrics(); }));
+}
+
+function renderMetrics(){
+  renderMetricBtns();
+  const def = METRIC_DEFS[metric];
+  document.getElementById('metricTitle').textContent = def.label;
+  document.getElementById('metricDesc').textContent = def.desc;
+
+  let rows = visibleData().map(d=>({d, v:def.get(d)}));
+  const withVal = rows.filter(r=>r.v!==null && r.v!==undefined);
+  const withoutVal = rows.filter(r=>r.v===null || r.v===undefined);
+  withVal.sort((a,b)=> def.log ? b.v-a.v : b.v-a.v);
+
+  let scaleMin, scaleMax;
+  if(def.log){
+    const vals = withVal.map(r=>Math.log10(r.v));
+    scaleMin = Math.min(...vals); scaleMax = Math.max(...vals);
+  } else {
+    scaleMin = def.min; scaleMax = def.max;
+  }
+  const span = (scaleMax-scaleMin) || 1;
+
+  const bars = document.getElementById('metricBars');
+  if(!withVal.length){
+    bars.innerHTML = `<div style="color:var(--muted-2); font-size:13px;">No vendors selected — pick some above.</div>`;
+  } else {
+    bars.innerHTML = withVal.map(r=>{
+      const c = modColor(r.d.modality);
+      const raw = def.log ? Math.log10(r.v) : r.v;
+      let pct = ((raw-scaleMin)/span)*100;
+      pct = Math.max(4, Math.min(100,pct));
+      return `<div class="barrow">
+        <div class="name"><span class="dot" style="background:${c}"></span>${r.d.company}</div>
+        <div class="track"><div class="fill" style="width:${pct}%; background:${c};"></div></div>
+        <div class="val">${def.fmt(r.d)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const note = document.getElementById('metricNote');
+  if(withoutVal.length){
+    note.style.display='block';
+    note.textContent = `Not shown (no comparable figure disclosed): ${withoutVal.map(r=>r.d.company).join(', ')}.`;
+  } else {
+    note.style.display='none';
+  }
+}
+
+/* ---------------- commentary view ---------------- */
+function renderCommentary(){
+  const rows = visibleData();
+  const el = document.getElementById('commentaryList');
+  if(!rows.length){
+    el.innerHTML = `<div style="color:var(--muted-2); font-size:13px; padding:14px 2px;">No vendors selected — pick some above.</div>`;
+    return;
+  }
+  el.innerHTML = rows.map(d=>{
+    const c = modColor(d.modality);
+    const filled = YEARS.filter((y,i)=> (commentary[d.id+':'+i]||'').trim().length>0).length;
+    const open = expandedCompanies.has(d.id);
+    const body = YEARS.map((y,i)=>{
+      const isPast = y<=CURRENT_YEAR;
+      const cn = d.codename[i];
+      const label = (cn? cn+' — ':'') + truncate(d.years[i], 74);
+      const key = d.id+':'+i;
+      const val = commentary[key] || '';
+      const placeholder = isAdmin
+        ? (isPast
+            ? `How is ${d.company} progressing toward — or did it already achieve — this milestone?`
+            : `Top 3 challenges ${d.company} must overcome to reach this milestone:\n1. \n2. \n3. `)
+        : 'No note yet.';
+      const ro = isAdmin ? '' : 'readonly';
+      return `<div class="cc-row">
+        <div class="cc-meta">
+          <span class="cc-year">${y}</span>
+          <span class="cc-tag ${isPast?'past':'future'}">${isPast?'Past / current':'Future'}</span>
+          <span class="cc-milestone">${escapeHtml(label)}</span>
+        </div>
+        <textarea class="cc-textarea ${isAdmin?'':'ro'}" ${ro} data-cid="${d.id}" data-yi="${i}" placeholder="${escapeHtml(placeholder)}" rows="3">${escapeHtml(val)}</textarea>
+      </div>`;
+    }).join('');
+    return `<div class="cc-company">
+      <button class="cc-head" data-cid="${d.id}">
+        <span class="dot" style="background:${c}"></span>
+        <span class="cc-name">${d.company}</span>
+        <span class="cc-mod">${MODALITIES[d.modality].label}</span>
+        <span class="cc-count">${filled}/10 notes</span>
+        <span class="chev ${open?'open':''}">⌄</span>
+      </button>
+      <div class="cc-body" style="display:${open?'block':'none'}">${body}</div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('.cc-head').forEach(btn=>btn.addEventListener('click', ()=>{
+    const id = btn.dataset.cid;
+    expandedCompanies.has(id) ? expandedCompanies.delete(id) : expandedCompanies.add(id);
+    renderCommentary();
+  }));
+
+  el.querySelectorAll('.cc-textarea').forEach(ta=>{
+    ta.addEventListener('input', ()=>{
+      const key = ta.dataset.cid+':'+ta.dataset.yi;
+      commentary[key] = ta.value;
+      scheduleSave(ta.dataset.cid, ta.dataset.yi);
+      const headEl = ta.closest('.cc-company').querySelector('.cc-count');
+      const cid = ta.dataset.cid;
+      const filled = YEARS.filter((y,i)=> (commentary[cid+':'+i]||'').trim().length>0).length;
+      headEl.textContent = `${filled}/10 notes`;
+    });
+  });
+}
+
+function renderAll(){
+  renderModChips();
+  renderCoGrid();
+  if(view==='graph') renderGraph();
+  else if(view==='table') renderTimeline();
+  else renderMetrics();
+  renderCommentary();
+}
+
+document.getElementById('search').addEventListener('input', e=>{ search = e.target.value; renderCoGrid(); });
+document.getElementById('adminToggle').addEventListener('click', handleAdminToggle);
+
+document.querySelectorAll('.viewtoggle button').forEach(b=>b.addEventListener('click', ()=>{
+  view = b.dataset.view;
+  document.querySelectorAll('.viewtoggle button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('graphView').style.display = view==='graph' ? '' : 'none';
+  document.getElementById('tableView').style.display = view==='table' ? '' : 'none';
+  document.getElementById('metricsView').style.display = view==='metrics' ? '' : 'none';
+  if(view==='graph') renderGraph();
+  else if(view==='table') renderTimeline();
+  else renderMetrics();
+}));
+
+(async function init(){
+  renderAdminButton();
+  document.getElementById('storageHint').textContent = 'Loading saved notes…';
+  await loadCommentary();
+  document.getElementById('storageHint').textContent = 'Notes are visible to everyone; only signed-in admins can add or edit them.';
+  renderStats();
+  renderAll();
+})();
+
+</script>
+</body>
+</html>
